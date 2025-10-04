@@ -24,10 +24,10 @@ export function SensorSelector({
   const { t } = useTranslation();
 
   return (
-    <div className="relative flex flex-col gap-4 rounded-lg border border-slate-800 bg-slate-900/50 p-4 shadow-lg">
+    <div className="relative flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-sm shadow-lg md:gap-4 md:p-4">
       <div>
-        <h2 className="text-lg font-semibold text-slate-50">{t.sensorPanel.title}</h2>
-        <p className="text-sm text-slate-400">{t.sensorPanel.description}</p>
+        <h2 className="text-base font-semibold text-slate-50 md:text-lg">{t.sensorPanel.title}</h2>
+        <p className="text-xs text-slate-400 md:text-sm">{t.sensorPanel.description}</p>
       </div>
       <Listbox value={selectedSensor?.id} onChange={onSelectSensor}>
         <div className="relative mt-1">

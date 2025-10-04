@@ -49,13 +49,13 @@ export function DashboardShell({ sensors, scenes }: DashboardShellProps) {
   const selectedScene = storeScenes.find((scene) => scene.id === selectedSceneId);
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-4 md:gap-8">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-slate-50">{t.appName}</h1>
-        <p className="max-w-3xl text-sm text-slate-400">{t.appDescription}</p>
+        <h1 className="text-2xl font-semibold text-slate-50 md:text-4xl">{t.appName}</h1>
+        <p className="max-w-3xl text-xs text-slate-400 md:text-sm">{t.appDescription}</p>
       </header>
-      <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
-        <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-[minmax(0,360px)_1fr] md:gap-6">
+        <div className="space-y-4 md:space-y-6">
           <LanguageSwitcher />
           <SensorSelector
             sensors={storeSensors}
@@ -68,7 +68,7 @@ export function DashboardShell({ sensors, scenes }: DashboardShellProps) {
           <SceneSelector scenes={storeScenes} selectedScene={selectedScene} onSelectScene={selectScene} />
           <CoverageStats scene={selectedScene} sensor={selectedSensor} />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           <DepthViewCanvas
             scene={selectedScene}
             sensor={selectedSensor}

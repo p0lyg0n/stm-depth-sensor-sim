@@ -5,7 +5,6 @@ import { Canvas } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { Suspense, useMemo, useRef, useLayoutEffect } from "react";
 import type { ResolutionSpec, SceneSpec, SensorSpec } from "@/lib/types";
-import type { TranslationEntry } from "@/lib/i18n";
 import { useTranslation } from "@/hooks/useTranslation";
 
 interface DepthViewCanvasProps {
@@ -164,7 +163,7 @@ export function DepthViewCanvas({
   const pitchDownDeg = frustumInfo ? Math.max(0, -frustumInfo.pitchDeg) : undefined;
 
   return (
-    <div className="relative h-[480px] w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-900/30">
+    <div className="relative h-[320px] w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-900/30 md:h-[480px]">
       <Canvas camera={{ position: [6, 4, 6], fov: 45 }}>
         <color attach="background" args={["#111a2b"]} />
         <ambientLight intensity={0.8} />
@@ -179,7 +178,7 @@ export function DepthViewCanvas({
         <OrbitControls enablePan enableZoom enableRotate />
       </Canvas>
       {frustumInfo && (
-        <div className="pointer-events-none absolute left-4 top-4 space-y-1 rounded-md bg-slate-900/80 px-3 py-2 text-xs text-slate-100 shadow">
+        <div className="pointer-events-none absolute left-3 top-3 space-y-1 rounded-md bg-slate-900/80 px-3 py-2 text-[11px] text-slate-100 shadow md:left-4 md:top-4 md:text-xs">
           <p className="font-semibold text-slate-200">{t.depthView.overlayTitle}</p>
           <p>
             {t.depthView.axisX}: {frustumInfo.localMillimeters.x.toFixed(0)} {t.depthView.distanceUnit}
@@ -320,7 +319,7 @@ function BasisArrows({
   labels
 }: {
   origin: THREE.Vector3;
-  labels: TranslationEntry["depthView"];
+  labels: ReturnType<typeof useTranslation>["t"]["depthView"];
 }) {
   return (
     <group position={[origin.x, origin.y, origin.z]}>
@@ -366,7 +365,7 @@ function AxisArrow({
     [dirVector, length]
   );
   const labelPosition = useMemo(
-    () => dirVector.clone().multiplyScalar(length + 0.15),
+    () => dirVector.clone().multiplyScalar(length + 0.12),
     [dirVector, length]
   );
 
@@ -381,11 +380,10 @@ function AxisArrow({
         <meshStandardMaterial color={color} />
       </mesh>
       <Html position={labelPosition.toArray()} center>
-        <div className="rounded bg-slate-900/80 px-1 py-1 text-[10px] text-slate-100 shadow">
+        <div className="rounded bg-slate-900/80 px-1 py-[2px] text-[10px] text-slate-100 shadow">
           {label}
         </div>
       </Html>
     </group>
   );
 }
-
