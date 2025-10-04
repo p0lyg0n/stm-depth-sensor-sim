@@ -1,0 +1,101 @@
+[
+  {
+    "id": "zed-2i",
+    "name": "ZED 2i",
+    "vendor": "Stereolabs",
+    "sensorType": "stereo_rgb_depth",
+    "baseline_mm": 120,
+    "depthRange_m": {
+      "min": 0.3,
+      "max": 20.0,
+      "recommendedMax": 15.0
+    },
+    "depthFov_deg": {
+      "horizontal": 110,
+      "vertical": 70,
+      "diagonal": 120
+    },
+    "rgbFov_deg": {
+      "horizontal": 110,
+      "vertical": 70,
+      "diagonal": 120
+    },
+    "depthResolutions": [
+      { "label": "2.2K", "width": 4416, "height": 1242, "fps": [15] },
+      { "label": "FHD+", "width": 3840, "height": 1080, "fps": [15, 30] },
+      { "label": "HD", "width": 2560, "height": 720, "fps": [30, 60] },
+      { "label": "VGA", "width": 1344, "height": 376, "fps": [60, 100] }
+    ],
+    "rgbResolutions": [
+      { "width": 4416, "height": 1242, "fps": [15] },
+      { "width": 3840, "height": 1080, "fps": [15, 30] },
+      { "width": 2560, "height": 720, "fps": [30, 60] }
+    ],
+    "imu": {
+      "accelerometer": true,
+      "gyroscope": true,
+      "magnetometer": true,
+      "barometer": true
+    },
+    "interfaces": ["USB3.0-TypeC", "GPIO-sync"],
+    "power_W": 2.5,
+    "operatingTemperature_C": {
+      "min": -20,
+      "max": 60
+    },
+    "environmentalRating": "IP66/IP67",
+    "sdkSupport": ["Windows", "Linux", "Jetson", "ROS2", "Unity", "Unreal"],
+    "notes": [
+      "視差ベースのステレオマッチングを使用",
+      "広角レンズのため周辺部での幾何誤差に注意",
+      "外部トリガーを使ったマルチカメラ同期が可能"
+    ]
+  },
+  {
+    "id": "femto-bolt",
+    "name": "Femto Bolt",
+    "vendor": "Orbbec",
+    "sensorType": "tof",
+    "depthRange_m": {
+      "min": 0.16,
+      "max": 5.0,
+      "recommendedMax": 3.0
+    },
+    "depthFov_deg": {
+      "horizontal": 100,
+      "vertical": 85,
+      "diagonal": 120
+    },
+    "rgbFov_deg": {
+      "horizontal": 92,
+      "vertical": 65,
+      "diagonal": 112
+    },
+    "depthResolutions": [
+      { "label": "Square", "width": 512, "height": 512, "fps": [15, 30] },
+      { "label": "VGA", "width": 640, "height": 480, "fps": [15, 30] },
+      { "label": "QVGA", "width": 320, "height": 288, "fps": [30, 60] }
+    ],
+    "rgbResolutions": [
+      { "width": 1920, "height": 1080, "fps": [30, 60] }
+    ],
+    "illumination": {
+      "wavelength_nm": 940,
+      "type": "VCSEL",
+      "eyeSafety": "Class 1"
+    },
+    "interfaces": ["USB3.0-TypeC", "Sync-In", "Sync-Out"],
+    "power_W": 4.5,
+    "operatingTemperature_C": {
+      "min": 0,
+      "max": 40
+    },
+    "environmentalRating": "IP52",
+    "sdkSupport": ["Windows", "Linux", "Android", "OpenNI"],
+    "notes": [
+      "近距離での高精度を重視したToF方式",
+      "筐体に1/4\"-20 UNCマウントがあり固定が容易",
+      "長時間稼働時は温度ドリフト対策としてキャリブレーションを推奨"
+    ]
+  }
+]

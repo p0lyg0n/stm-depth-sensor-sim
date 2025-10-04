@@ -1,0 +1,35 @@
+[
+  {
+    "id": "indoor-default",
+    "name": "屋内テストシーン",
+    "description": "屋内の矩形エリアを想定した基本シーン",
+    "environment": "indoor",
+    "dimensions_m": {
+      "width": 4.0,
+      "depth": 2.0,
+      "height": 2.4
+    },
+    "origin": {
+      "reference": "floor_center",
+      "notes": "床面中心を原点とし、Xが幅方向、Yが高さ、Zが奥行方向"
+    },
+    "defaultCameraPose": {
+      "position_m": { "x": 0.0, "y": 2.2, "z": -2.5 },
+      "rotation_deg": {
+        "yaw": 0.0,
+        "pitch": -15.0,
+        "roll": 0.0
+      },
+      "notes": "範囲中心から離れた正面位置。ピッチを下げて全体カバーを狙う初期案"
+    },
+    "constraints": {
+      "cameraPlacement": "範囲外からの設置可。壁や柱などの遮蔽物は未考慮",
+      "coverageGoal": "直方体全域の被覆率100%を目標"
+    },
+    "annotations": [
+      "照明条件は均一な室内照明を想定",
+      "床材は反射率中程度のフローリングを想定",
+      "将来的に家具や遮蔽物を追加する可能性あり"
+    ]
+  }
+]
