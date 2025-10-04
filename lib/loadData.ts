@@ -1,5 +1,5 @@
-import sensors from "@data/sensors.json" assert { type: "json" };
-import scenes from "@data/scenes.json" assert { type: "json" };
+import sensors from "@data/sensors.json";
+import scenes from "@data/scenes.json";
 import type { SceneSpec, SensorSpec } from "@/lib/types";
 
 export function loadSensors(): SensorSpec[] {
