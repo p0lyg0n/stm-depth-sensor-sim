@@ -9,6 +9,8 @@ export interface AppState {
   selectedDepthResolution?: ResolutionSpec;
   selectedSceneId?: string;
   cameraHeight: number;
+  cameraDistanceMode: "auto" | "manual";
+  manualCameraDistance: number;
   language: SupportedLanguage;
   setSensors: (sensors: SensorSpec[]) => void;
   setScenes: (scenes: SceneSpec[]) => void;
@@ -16,6 +18,8 @@ export interface AppState {
   selectDepthResolution: (resolution: ResolutionSpec) => void;
   selectScene: (sceneId: string) => void;
   setCameraHeight: (height: number) => void;
+  setCameraDistanceMode: (mode: "auto" | "manual") => void;
+  setManualCameraDistance: (distance: number) => void;
   setLanguage: (language: SupportedLanguage) => void;
 }
 
@@ -26,6 +30,8 @@ export const useAppStore = create<AppState>((set) => ({
   selectedDepthResolution: undefined,
   selectedSceneId: undefined,
   cameraHeight: 2.2,
+  cameraDistanceMode: "auto",
+  manualCameraDistance: 3.0,
   language: "ja",
   setSensors: (sensors) =>
     set((state) => ({
@@ -63,5 +69,15 @@ export const useAppStore = create<AppState>((set) => ({
         state.cameraHeight
     })),
   setCameraHeight: (height) => set({ cameraHeight: Math.max(0.1, height) }),
+  setCameraDistanceMode: (mode) =>
+    set((state) => ({
+      cameraDistanceMode: mode,
+      manualCameraDistance:
+        mode === "manual" && state.manualCameraDistance <= 0
+          ? 3.0
+          : state.manualCameraDistance
+    })),
+  setManualCameraDistance: (distance) =>
+    set({ manualCameraDistance: Math.max(0.5, distance) }),
   setLanguage: (language) => set({ language })
 }));

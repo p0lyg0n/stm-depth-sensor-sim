@@ -3,10 +3,26 @@ export type SupportedLanguage = "ja" | "en" | "ko";
 export interface TranslationEntry {
   appName: string;
   appDescription: string;
+  appNotes: string;
   sensorPanel: {
     title: string;
     description: string;
     resolutionPlaceholder: string;
+    specTitle: string;
+  };
+  sensorSpec: {
+    heading: string;
+    vendor: string;
+    type: string;
+    depthRange: string;
+    fov: string;
+    baseline: string;
+    power: string;
+    interfaces: string;
+    imu: string;
+    depthRes: string;
+    rgbRes: string;
+    notes: string;
   };
   scenePanel: {
     title: string;
@@ -19,6 +35,10 @@ export interface TranslationEntry {
     title: string;
     description: string;
     heightLabel: string;
+    distanceModeLabel: string;
+    distanceModeAuto: string;
+    distanceModeManual: string;
+    manualDistanceLabel: string;
   };
   coveragePanel: {
     title: string;
@@ -39,6 +59,7 @@ export interface TranslationEntry {
     maxRangeLabel: string;
     requiredRangeLabel: string;
     outOfRange: string;
+    coverageGap: string;
   };
   language: {
     label: string;
@@ -53,11 +74,28 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
     appName: "Sports Time Machine Depth Sensor Sim",
     appDescription:
       "スポーツタイムマシンで使用する1ユニットの深度センサーを検討するための社内向けアプリです。",
+    appNotes:
+      "Z は基準壁からカメラまでの距離です。自動モードでは対象直方体をすべて覆える最小距離を探索し、手動モードでは入力した距離で視錐を描画します。必要距離がセンサーの最大距離や入力した距離を超える場合は、測距範囲または視野角が不足していることを意味します。",
     sensorPanel: {
       title: "センサー選択",
       description:
         "比較したい深度センサーを切り替えて仕様と視野シミュレーションを確認します。",
-      resolutionPlaceholder: "解像度を選択"
+      resolutionPlaceholder: "解像度を選択",
+      specTitle: "センサー仕様"
+    },
+    sensorSpec: {
+      heading: "センサー仕様",
+      vendor: "メーカー",
+      type: "種別",
+      depthRange: "深度測定範囲",
+      fov: "深度FOV (H×V)",
+      baseline: "ベースライン",
+      power: "消費電力",
+      interfaces: "インターフェース",
+      imu: "IMU",
+      depthRes: "深度解像度",
+      rgbRes: "RGB解像度",
+      notes: "備考"
     },
     scenePanel: {
       title: "シーン選択",
@@ -72,7 +110,11 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       title: "カメラ高さ",
       description:
         "センサーを設置する高さをメートル単位で指定します。高さに合わせて視野が対象範囲を全て含むよう自動配置します。",
-      heightLabel: "カメラ高さ (m)"
+      heightLabel: "カメラ高さ (m)",
+      distanceModeLabel: "距離調整",
+      distanceModeAuto: "自動",
+      distanceModeManual: "手動",
+      manualDistanceLabel: "壁からの距離 (m)"
     },
     coveragePanel: {
       title: "カバレッジ指標",
@@ -93,7 +135,8 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       angleUnit: "°",
       maxRangeLabel: "センサー最大距離",
       requiredRangeLabel: "必要距離",
-      outOfRange: "⚠ この条件では撮影範囲を満たせません"
+      outOfRange: "⚠ センサーの測距範囲を超えています",
+      coverageGap: "⚠ この距離では視野角の制約により範囲を覆えません"
     },
     language: {
       label: "言語",
@@ -106,11 +149,28 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
     appName: "Sports Time Machine Depth Sensor Sim",
     appDescription:
       "Internal tool for evaluating single depth sensor units used in Sports Time Machine projects.",
+    appNotes:
+      "Z represents the distance from the reference wall to the camera. Auto mode searches for the minimal distance that covers the entire box, while manual mode visualizes the frustum at the specified distance. When the required distance exceeds the sensor\'s maximum range or the chosen value, the field of view or range is insufficient.",
     sensorPanel: {
       title: "Sensor Selection",
       description:
         "Switch between depth sensors to review specifications and visualize the simulated field of view.",
-      resolutionPlaceholder: "Select resolution"
+      resolutionPlaceholder: "Select resolution",
+      specTitle: "Sensor Specifications"
+    },
+    sensorSpec: {
+      heading: "Sensor Specifications",
+      vendor: "Vendor",
+      type: "Type",
+      depthRange: "Depth range",
+      fov: "Depth FOV (H×V)",
+      baseline: "Baseline",
+      power: "Power",
+      interfaces: "Interfaces",
+      imu: "IMU",
+      depthRes: "Depth resolutions",
+      rgbRes: "RGB resolutions",
+      notes: "Notes"
     },
     scenePanel: {
       title: "Scene Selection",
@@ -125,7 +185,11 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       title: "Camera Height",
       description:
         "Specify the sensor height in meters. The system adjusts the pose to keep the full target area in view.",
-      heightLabel: "Camera height (m)"
+      heightLabel: "Camera height (m)",
+      distanceModeLabel: "Distance Control",
+      distanceModeAuto: "Auto",
+      distanceModeManual: "Manual",
+      manualDistanceLabel: "Distance from wall (m)"
     },
     coveragePanel: {
       title: "Coverage Metrics",
@@ -146,7 +210,8 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       angleUnit: "°",
       maxRangeLabel: "Sensor max range",
       requiredRangeLabel: "Required distance",
-      outOfRange: "⚠ Scene exceeds sensor range"
+      outOfRange: "⚠ Scene exceeds sensor range",
+      coverageGap: "⚠ Field of view cannot cover the entire scene at this distance"
     },
     language: {
       label: "Language",
@@ -159,10 +224,27 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
     appName: "Sports Time Machine Depth Sensor Sim",
     appDescription:
       "스포츠 타임머신에서 사용할 단일 깊이 센서를 검토하기 위한 사내용 애플리케이션입니다.",
+    appNotes:
+      "Z 값은 기준 벽과 카메라 사이의 거리입니다. 자동 모드에서는 직육면체 전체를 덮는 최소 거리를 탐색하고, 수동 모드에서는 입력한 거리에서의 시야를 시각화합니다. 필요 거리값이 센서의 최대 측정 거리나 입력한 거리보다 크면, 시야각 또는 측정 범위가 부족하다는 의미입니다.",
     sensorPanel: {
       title: "센서 선택",
       description: "비교할 깊이 센서를 전환하면서 사양과 시야 시뮬레이션을 확인합니다.",
-      resolutionPlaceholder: "해상도를 선택"
+      resolutionPlaceholder: "해상도를 선택",
+      specTitle: "센서 사양"
+    },
+    sensorSpec: {
+      heading: "센서 사양",
+      vendor: "제조사",
+      type: "유형",
+      depthRange: "깊이 측정 범위",
+      fov: "깊이 FOV (H×V)",
+      baseline: "베이스라인",
+      power: "소비 전력",
+      interfaces: "인터페이스",
+      imu: "IMU",
+      depthRes: "깊이 해상도",
+      rgbRes: "RGB 해상도",
+      notes: "비고"
     },
     scenePanel: {
       title: "씬 선택",
@@ -176,7 +258,11 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
     cameraPanel: {
       title: "카메라 높이",
       description: "센서 설치 높이를 미터 단위로 지정합니다. 높이에 맞추어 대상 영역 전체가 보이도록 자동 조정합니다.",
-      heightLabel: "카메라 높이 (m)"
+      heightLabel: "카메라 높이 (m)",
+      distanceModeLabel: "거리 조절",
+      distanceModeAuto: "자동",
+      distanceModeManual: "수동",
+      manualDistanceLabel: "벽까지 거리 (m)"
     },
     coveragePanel: {
       title: "커버리지 지표",
@@ -196,7 +282,8 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       angleUnit: "°",
       maxRangeLabel: "센서 최대 거리",
       requiredRangeLabel: "필요 거리",
-      outOfRange: "⚠ 이 조건에서는 촬영이 불가능합니다"
+      outOfRange: "⚠ 센서의 측정 범위를 초과합니다",
+      coverageGap: "⚠ 이 거리에서는 시야각으로 전체 장면을 덮을 수 없습니다"
     },
     language: {
       label: "언어",

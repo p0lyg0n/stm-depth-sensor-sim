@@ -5,6 +5,7 @@ import type { SceneSpec, SensorSpec } from "@/lib/types";
 import { useAppStore } from "@/hooks/useAppStore";
 import { useTranslation } from "@/hooks/useTranslation";
 import { SensorSelector } from "@/components/SensorSelector";
+import { SensorSpecTable } from "@/components/SensorSpecTable";
 import { SceneSelector } from "@/components/SceneSelector";
 import { CameraControls } from "@/components/CameraControls";
 import { DepthViewCanvas } from "@/components/DepthViewCanvas";
@@ -64,6 +65,7 @@ export function DashboardShell({ sensors, scenes }: DashboardShellProps) {
             onSelectSensor={selectSensor}
             onSelectResolution={selectDepthResolution}
           />
+          <SensorSpecTable sensor={selectedSensor} />
           <CameraControls cameraHeight={cameraHeight} onChangeHeight={setCameraHeight} />
           <SceneSelector scenes={storeScenes} selectedScene={selectedScene} onSelectScene={selectScene} />
           <CoverageStats scene={selectedScene} sensor={selectedSensor} />
@@ -77,6 +79,9 @@ export function DashboardShell({ sensors, scenes }: DashboardShellProps) {
           />
         </div>
       </div>
+      <footer className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-xs text-slate-300 shadow md:p-4 md:text-sm">
+        {t.appNotes}
+      </footer>
     </section>
   );
 }
