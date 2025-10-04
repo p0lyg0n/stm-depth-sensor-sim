@@ -73,9 +73,9 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
   ja: {
     appName: "Sports Time Machine Depth Sensor Sim",
     appDescription:
-      "スポーツタイムマシンで使用する1ユニットの深度センサーを検討するための社内向けアプリです。",
+      "スポーツタイムマシンで使用する1ユニットの深度センサーを評価するための社内向けWebアプリです。",
     appNotes:
-      "Z は基準壁からカメラまでの距離です。自動モードでは対象直方体をすべて覆える最小距離を探索し、手動モードでは入力した距離で視錐を描画します。必要距離がセンサーの最大距離や入力した距離を超える場合は、測距範囲または視野角が不足していることを意味します。",
+      "Z は基準壁からカメラまでの距離です。自動モードでは対象直方体を覆える最小距離を探索し、手動モードでは入力した距離で視錐を描画します。必要距離がセンサーの最大距離や入力した距離を超える場合は、レンジまたは視野角が不足していることを意味します。",
     sensorPanel: {
       title: "センサー選択",
       description:
@@ -107,10 +107,10 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       goalLabel: (goal) => (goal ? `目標: ${goal}` : "")
     },
     cameraPanel: {
-      title: "カメラ高さ",
+      title: "カメラの位置",
       description:
-        "センサーを設置する高さをメートル単位で指定します。高さに合わせて視野が対象範囲を全て含むよう自動配置します。",
-      heightLabel: "カメラ高さ (m)",
+        "センサーの高さと壁からの距離を調整します。自動モードでは最小距離を探索し、手動モードでは任意の距離で視野を確認できます。",
+      heightLabel: "高さ (m)",
       distanceModeLabel: "距離調整",
       distanceModeAuto: "自動",
       distanceModeManual: "手動",
@@ -136,7 +136,7 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       maxRangeLabel: "センサー最大距離",
       requiredRangeLabel: "必要距離",
       outOfRange: "⚠ センサーの測距範囲を超えています",
-      coverageGap: "⚠ この距離では視野角の制約により範囲を覆えません"
+      coverageGap: "⚠ この距離では視野角の制約により全体を覆えません"
     },
     language: {
       label: "言語",
@@ -148,9 +148,9 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
   en: {
     appName: "Sports Time Machine Depth Sensor Sim",
     appDescription:
-      "Internal tool for evaluating single depth sensor units used in Sports Time Machine projects.",
+      "Internal web tool for evaluating single depth sensor units used in Sports Time Machine projects.",
     appNotes:
-      "Z represents the distance from the reference wall to the camera. Auto mode searches for the minimal distance that covers the entire box, while manual mode visualizes the frustum at the specified distance. When the required distance exceeds the sensor\'s maximum range or the chosen value, the field of view or range is insufficient.",
+      "Z represents the distance from the reference wall to the camera. Auto mode searches for the minimal distance that covers the entire box, while manual mode visualizes the frustum at the specified distance. If the required distance exceeds the sensor\'s maximum range or your chosen distance, range or field of view is insufficient.",
     sensorPanel: {
       title: "Sensor Selection",
       description:
@@ -182,10 +182,10 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       goalLabel: (goal) => (goal ? `Goal: ${goal}` : "")
     },
     cameraPanel: {
-      title: "Camera Height",
+      title: "Camera Position",
       description:
-        "Specify the sensor height in meters. The system adjusts the pose to keep the full target area in view.",
-      heightLabel: "Camera height (m)",
+        "Adjust the sensor height and distance from the wall. Auto mode finds the minimum distance, while manual mode lets you inspect any distance.",
+      heightLabel: "Height (m)",
       distanceModeLabel: "Distance Control",
       distanceModeAuto: "Auto",
       distanceModeManual: "Manual",
@@ -223,9 +223,9 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
   ko: {
     appName: "Sports Time Machine Depth Sensor Sim",
     appDescription:
-      "스포츠 타임머신에서 사용할 단일 깊이 센서를 검토하기 위한 사내용 애플리케이션입니다.",
+      "스포츠 타임머신 프로젝트에서 사용할 단일 깊이 센서를 평가하기 위한 사내용 웹 애플리케이션입니다.",
     appNotes:
-      "Z 값은 기준 벽과 카메라 사이의 거리입니다. 자동 모드에서는 직육면체 전체를 덮는 최소 거리를 탐색하고, 수동 모드에서는 입력한 거리에서의 시야를 시각화합니다. 필요 거리값이 센서의 최대 측정 거리나 입력한 거리보다 크면, 시야각 또는 측정 범위가 부족하다는 의미입니다.",
+      "Z 값은 기준 벽과 카메라 사이의 거리입니다. 자동 모드에서는 직육면체 전체를 덮는 최소 거리를 탐색하고, 수동 모드에서는 입력한 거리에서의 시야를 그립니다. 필요 거리가 센서 최대 거리나 입력한 거리보다 크면 측정 범위 또는 시야각이 부족합니다.",
     sensorPanel: {
       title: "센서 선택",
       description: "비교할 깊이 센서를 전환하면서 사양과 시야 시뮬레이션을 확인합니다.",
@@ -256,9 +256,9 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       goalLabel: (goal) => (goal ? `목표: ${goal}` : "")
     },
     cameraPanel: {
-      title: "카메라 높이",
-      description: "센서 설치 높이를 미터 단위로 지정합니다. 높이에 맞추어 대상 영역 전체가 보이도록 자동 조정합니다.",
-      heightLabel: "카메라 높이 (m)",
+      title: "카메라 위치",
+      description: "센서의 높이와 벽으로부터의 거리를 조정합니다. 자동 모드는 최소 거리를, 수동 모드는 원하는 거리를 확인할 수 있습니다.",
+      heightLabel: "높이 (m)",
       distanceModeLabel: "거리 조절",
       distanceModeAuto: "자동",
       distanceModeManual: "수동",
@@ -282,7 +282,7 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       angleUnit: "°",
       maxRangeLabel: "센서 최대 거리",
       requiredRangeLabel: "필요 거리",
-      outOfRange: "⚠ 센서의 측정 범위를 초과합니다",
+      outOfRange: "⚠ 이 조건에서는 센서 측정 범위를 초과합니다",
       coverageGap: "⚠ 이 거리에서는 시야각으로 전체 장면을 덮을 수 없습니다"
     },
     language: {
