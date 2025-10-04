@@ -36,6 +36,9 @@ export interface TranslationEntry {
     pitchLabel: string;
     distanceUnit: string;
     angleUnit: string;
+    maxRangeLabel: string;
+    requiredRangeLabel: string;
+    outOfRange: string;
   };
   language: {
     label: string;
@@ -87,7 +90,10 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       axisZ: "Z",
       pitchLabel: "下向き角度",
       distanceUnit: "mm",
-      angleUnit: "°"
+      angleUnit: "°",
+      maxRangeLabel: "センサー最大距離",
+      requiredRangeLabel: "必要距離",
+      outOfRange: "⚠ この条件では撮影範囲を満たせません"
     },
     language: {
       label: "言語",
@@ -137,7 +143,10 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       axisZ: "Z",
       pitchLabel: "Tilt angle",
       distanceUnit: "mm",
-      angleUnit: "°"
+      angleUnit: "°",
+      maxRangeLabel: "Sensor max range",
+      requiredRangeLabel: "Required distance",
+      outOfRange: "⚠ Scene exceeds sensor range"
     },
     language: {
       label: "Language",
@@ -184,7 +193,10 @@ export const translations: Record<SupportedLanguage, TranslationEntry> = {
       axisZ: "Z",
       pitchLabel: "하향 각도",
       distanceUnit: "mm",
-      angleUnit: "°"
+      angleUnit: "°",
+      maxRangeLabel: "센서 최대 거리",
+      requiredRangeLabel: "필요 거리",
+      outOfRange: "⚠ 이 조건에서는 촬영이 불가능합니다"
     },
     language: {
       label: "언어",

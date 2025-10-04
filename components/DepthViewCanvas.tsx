@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { Suspense, useMemo, useRef, useLayoutEffect } from "react";
 import type { ResolutionSpec, SceneSpec, SensorSpec } from "@/lib/types";
+import type { TranslationEntry } from "@/lib/i18n";
 import { useTranslation } from "@/hooks/useTranslation";
 
 interface DepthViewCanvasProps {
@@ -26,6 +27,9 @@ interface FrustumInfo {
   localMeters: { x: number; y: number; z: number };
   localMillimeters: { x: number; y: number; z: number };
   pitchDeg: number;
+  maxRange: number;
+  requiredDistance: number;
+  withinRange: boolean;
 }
 
 const STEP_DISTANCE = 0.02;
@@ -61,6 +65,7 @@ export function DepthViewCanvas({
     const horizontalFovRad = THREE.MathUtils.degToRad(sensor.depthFov_deg.horizontal);
 
     const cameraY = Math.max(cameraHeight, 0.2);
+    const sensorMaxRange = sensor.depthRange_m?.max ?? Number.POSITIVE_INFINITY;
 
     const minDistanceByWidth = halfWidth / Math.tan(horizontalFovRad / 2);
     const startDistance = Math.max(minDistanceByWidth, 0.3);
@@ -122,6 +127,8 @@ export function DepthViewCanvas({
       const near = Math.max(0.1, minProjection - 0.2);
       const far = Math.max(near + 0.5, maxProjection + 0.2);
 
+      const withinRange = maxProjection <= sensorMaxRange;
+
       const nearHeight = 2 * Math.tan(verticalFovRad / 2) * near;
       const nearWidth = 2 * Math.tan(horizontalFovRad / 2) * near;
       const farHeight = 2 * Math.tan(verticalFovRad / 2) * far;
@@ -147,7 +154,10 @@ export function DepthViewCanvas({
           y: localY * 1000,
           z: localZ * 1000
         },
-        pitchDeg: THREE.MathUtils.radToDeg(pitch)
+        pitchDeg: THREE.MathUtils.radToDeg(pitch),
+        maxRange: sensorMaxRange,
+        requiredDistance: maxProjection,
+        withinRange
       };
     }
 
@@ -189,10 +199,19 @@ export function DepthViewCanvas({
           <p>
             {t.depthView.axisZ}: {frustumInfo.localMillimeters.z.toFixed(0)} {t.depthView.distanceUnit}
           </p>
+          <p>
+            {t.depthView.maxRangeLabel}: {Number.isFinite(frustumInfo.maxRange) ? (frustumInfo.maxRange * 1000).toFixed(0) + " " + t.depthView.distanceUnit : "Infinity"}
+          </p>
+          <p>
+            {t.depthView.requiredRangeLabel}: {(frustumInfo.requiredDistance * 1000).toFixed(0)} {t.depthView.distanceUnit}
+          </p>
           {pitchDownDeg !== undefined && (
             <p>
               {t.depthView.pitchLabel}: {pitchDownDeg.toFixed(1)}{t.depthView.angleUnit}
             </p>
+          )}
+          {!frustumInfo.withinRange && (
+            <p className="font-semibold text-rose-300">{t.depthView.outOfRange}</p>
           )}
         </div>
       )}
@@ -247,11 +266,11 @@ function SensorGizmo({ frustumInfo }: { frustumInfo?: FrustumInfo }) {
     }
   }, [frustumInfo]);
 
-  const { frustumLines, frustumFaces } = useMemo(() => {
+  const { frustumLines, frustumFaces, rangePlane } = useMemo(() => {
     if (!frustumInfo) {
-      return { frustumLines: undefined, frustumFaces: undefined };
+      return { frustumLines: undefined, frustumFaces: undefined, rangePlane: undefined };
     }
-    const { near, far, nearWidth, nearHeight, farWidth, farHeight } = frustumInfo;
+    const { near, far, nearWidth, nearHeight, farWidth, farHeight, maxRange } = frustumInfo;
 
     const nearHalfW = nearWidth / 2;
     const nearHalfH = nearHeight / 2;
@@ -324,7 +343,24 @@ function SensorGizmo({ frustumInfo }: { frustumInfo?: FrustumInfo }) {
     faceGeometry.setAttribute("position", new THREE.Float32BufferAttribute(faceVertices, 3));
     faceGeometry.computeVertexNormals();
 
-    return { frustumLines: lineGeometry, frustumFaces: faceGeometry };
+    let rangePlane: { geometry: THREE.PlaneGeometry; distance: number } | undefined;
+    if (Number.isFinite(maxRange)) {
+      const distance = Math.max(0, Math.min(maxRange, far));
+      if (distance > near) {
+        const tanH = nearWidth / (2 * near);
+        const tanV = nearHeight / (2 * near);
+        const planeWidth = distance * tanH * 2;
+        const planeHeight = distance * tanV * 2;
+        if (planeWidth > 0 && planeHeight > 0) {
+          rangePlane = {
+            geometry: new THREE.PlaneGeometry(planeWidth, planeHeight),
+            distance
+          };
+        }
+      }
+    }
+
+    return { frustumLines: lineGeometry, frustumFaces: faceGeometry, rangePlane };
   }, [frustumInfo]);
 
   if (!frustumInfo || !frustumLines || !frustumFaces) return null;
@@ -335,6 +371,16 @@ function SensorGizmo({ frustumInfo }: { frustumInfo?: FrustumInfo }) {
         <boxGeometry args={[0.12, 0.06, 0.16]} />
         <meshStandardMaterial color="#fb923c" />
       </mesh>
+      {rangePlane && (
+        <mesh geometry={rangePlane.geometry} position={[0, 0, rangePlane.distance]}>
+          <meshStandardMaterial
+            color={frustumInfo.withinRange ? "#f97316" : "#f87171"}
+            opacity={0.12}
+            transparent
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      )}
       <mesh geometry={frustumFaces}>
         <meshStandardMaterial color="#f97316" opacity={0.15} transparent side={THREE.DoubleSide} />
       </mesh>
@@ -350,7 +396,7 @@ function BasisArrows({
   labels
 }: {
   origin: THREE.Vector3;
-  labels: ReturnType<typeof useTranslation>["t"]["depthView"];
+  labels: TranslationEntry["depthView"];
 }) {
   return (
     <group position={[origin.x, origin.y, origin.z]}>
@@ -418,3 +464,5 @@ function AxisArrow({
     </group>
   );
 }
+
+
