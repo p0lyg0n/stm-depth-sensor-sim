@@ -6,15 +6,27 @@ interface CoverageStatsProps {
   scene?: SceneSpec;
   sensor?: SensorSpec;
   coverageRatio?: number;
+  variant?: "card" | "plain";
 }
 
-export function CoverageStats({ scene, sensor, coverageRatio }: CoverageStatsProps) {
+export function CoverageStats({ scene, sensor, coverageRatio, variant = "card" }: CoverageStatsProps) {
   const { t, language } = useTranslation();
 
+  const containerClass =
+    variant === "card"
+      ? "grid gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-sm text-slate-200 shadow-lg md:p-4"
+      : "grid gap-3 text-xs text-slate-200 md:text-sm";
+  const titleClass = variant === "card" ? "text-base font-semibold text-slate-50 md:text-lg" : "text-sm font-semibold text-slate-100";
+  const descriptionClass = variant === "card" ? "text-xs text-slate-400 md:text-sm" : "text-[11px] text-slate-400 md:text-xs";
+
   return (
-    <div className="grid gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-sm text-slate-200 shadow-lg md:p-4">
-      <h2 className="text-base font-semibold text-slate-50 md:text-lg">{t.coveragePanel.title}</h2>
-      <p className="text-xs text-slate-400 md:text-sm">{t.coveragePanel.description}</p>
+    <div className={containerClass}>
+      {variant === "card" && (
+        <>
+          <h2 className={titleClass}>{t.coveragePanel.title}</h2>
+          <p className={descriptionClass}>{t.coveragePanel.description}</p>
+        </>
+      )}
       <div className="grid gap-2">
         <InfoRow label={t.coveragePanel.sceneLabel} value={scene ? scene.name : "-"} />
         <InfoRow label={t.coveragePanel.sensorLabel} value={sensor ? `${sensor.name} (${sensor.vendor})` : "-"} />

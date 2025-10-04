@@ -10,17 +10,27 @@ interface SceneSelectorProps {
   scenes: SceneSpec[];
   selectedScene?: SceneSpec;
   onSelectScene: (sceneId: string) => void;
+  variant?: "card" | "plain";
 }
 
-export function SceneSelector({ scenes, selectedScene, onSelectScene }: SceneSelectorProps) {
+export function SceneSelector({ scenes, selectedScene, onSelectScene, variant = "card" }: SceneSelectorProps) {
   const { t } = useTranslation();
 
+  const containerClass =
+    variant === "card"
+      ? "flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-sm shadow-lg md:gap-4 md:p-4"
+      : "flex flex-col gap-3 text-xs text-slate-200 md:text-sm";
+  const titleClass = variant === "card" ? "text-base font-semibold text-slate-50 md:text-lg" : "text-sm font-semibold text-slate-100";
+  const descriptionClass = variant === "card" ? "text-xs text-slate-400 md:text-sm" : "text-[11px] text-slate-400 md:text-xs";
+
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-900/50 p-3 text-sm shadow-lg md:gap-4 md:p-4">
-      <div>
-        <h2 className="text-base font-semibold text-slate-50 md:text-lg">{t.scenePanel.title}</h2>
-        <p className="text-xs text-slate-400 md:text-sm">{t.scenePanel.description}</p>
-      </div>
+    <div className={containerClass}>
+      {variant === "card" && (
+        <div>
+          <h2 className={titleClass}>{t.scenePanel.title}</h2>
+          <p className={descriptionClass}>{t.scenePanel.description}</p>
+        </div>
+      )}
       <Listbox value={selectedScene?.id} onChange={onSelectScene}>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-default rounded-md bg-slate-800/60 py-2 pl-3 pr-10 text-left text-sm text-slate-100 shadow-md focus:outline-none focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-400">

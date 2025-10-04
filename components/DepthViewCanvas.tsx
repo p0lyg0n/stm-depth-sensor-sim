@@ -13,6 +13,8 @@ interface DepthViewCanvasProps {
   sensor?: SensorSpec;
   resolution?: ResolutionSpec;
   cameraHeight: number;
+  cameraDistanceMode: "auto" | "manual";
+  manualCameraDistance: number;
 }
 
 interface FrustumInfo {
@@ -30,6 +32,7 @@ interface FrustumInfo {
   maxRange: number;
   requiredDistance: number;
   withinRange: boolean;
+  coversScene: boolean;
 }
 
 const STEP_DISTANCE = 0.02;
@@ -39,7 +42,9 @@ export function DepthViewCanvas({
   scene,
   sensor,
   resolution,
-  cameraHeight
+  cameraHeight,
+  cameraDistanceMode,
+  manualCameraDistance
 }: DepthViewCanvasProps) {
   const { t } = useTranslation();
 
@@ -70,13 +75,7 @@ export function DepthViewCanvas({
     const minDistanceByWidth = halfWidth / Math.tan(horizontalFovRad / 2);
     const startDistance = Math.max(minDistanceByWidth, 0.3);
 
-    let solution: FrustumInfo | undefined;
-
-    for (
-      let distance = startDistance;
-      distance <= 100 && !solution;
-      distance += STEP_DISTANCE
-    ) {
+    const evaluateDistance = (distance: number): FrustumInfo => {
       const position = new THREE.Vector3(0, cameraY, -distance);
 
       let minYaw = Number.POSITIVE_INFINITY;
@@ -98,13 +97,9 @@ export function DepthViewCanvas({
 
       const yawSpan = maxYaw - minYaw;
       const pitchSpan = maxPitch - minPitch;
-
-      if (
-        yawSpan > horizontalFovRad + EPSILON ||
-        pitchSpan > verticalFovRad + EPSILON
-      ) {
-        continue;
-      }
+      const coversScene =
+        yawSpan <= horizontalFovRad + EPSILON &&
+        pitchSpan <= verticalFovRad + EPSILON;
 
       const yaw = (minYaw + maxYaw) / 2;
       const pitch = (minPitch + maxPitch) / 2;
@@ -127,27 +122,27 @@ export function DepthViewCanvas({
       const near = Math.max(0.1, minProjection - 0.2);
       const far = Math.max(near + 0.5, maxProjection + 0.2);
 
-      const withinRange = maxProjection <= sensorMaxRange;
-
-      const nearHeight = 2 * Math.tan(verticalFovRad / 2) * near;
-      const nearWidth = 2 * Math.tan(horizontalFovRad / 2) * near;
-      const farHeight = 2 * Math.tan(verticalFovRad / 2) * far;
-      const farWidth = 2 * Math.tan(horizontalFovRad / 2) * far;
+      const nearHeightVal = 2 * Math.tan(verticalFovRad / 2) * near;
+      const nearWidthVal = 2 * Math.tan(horizontalFovRad / 2) * near;
+      const farHeightVal = 2 * Math.tan(verticalFovRad / 2) * far;
+      const farWidthVal = 2 * Math.tan(horizontalFovRad / 2) * far;
 
       const originCorner = new THREE.Vector3(halfWidth, 0, halfDepth);
       const localX = originCorner.x - position.x;
       const localY = position.y - originCorner.y;
       const localZ = originCorner.z - position.z;
 
-      solution = {
+      const withinRange = maxProjection <= sensorMaxRange;
+
+      return {
         position,
         direction,
         near,
         far,
-        nearWidth,
-        nearHeight,
-        farWidth,
-        farHeight,
+        nearWidth: nearWidthVal,
+        nearHeight: nearHeightVal,
+        farWidth: farWidthVal,
+        farHeight: farHeightVal,
         localMeters: { x: localX, y: localY, z: localZ },
         localMillimeters: {
           x: localX * 1000,
@@ -157,13 +152,41 @@ export function DepthViewCanvas({
         pitchDeg: THREE.MathUtils.radToDeg(pitch),
         maxRange: sensorMaxRange,
         requiredDistance: maxProjection,
-        withinRange
+        withinRange,
+        coversScene
       };
+    };
+
+    if (cameraDistanceMode === "manual") {
+      const manualDistance = Math.max(0.3, manualCameraDistance);
+      return evaluateDistance(manualDistance);
     }
 
-    return solution;
-  }, [scene, sensor, resolution, cameraHeight]);
+    let fallback: FrustumInfo | undefined;
 
+    for (
+      let distance = startDistance;
+      distance <= 100;
+      distance += STEP_DISTANCE
+    ) {
+      const candidate = evaluateDistance(distance);
+      if (!fallback) {
+        fallback = candidate;
+      }
+      if (candidate.coversScene) {
+        return candidate;
+      }
+    }
+
+    return fallback;
+  }, [
+    scene,
+    sensor,
+    resolution,
+    cameraHeight,
+    cameraDistanceMode,
+    manualCameraDistance
+  ]);
   const originPosition = useMemo(() => {
     if (!scene) return undefined;
     const { width, depth } = scene.dimensions_m;
@@ -209,6 +232,9 @@ export function DepthViewCanvas({
             <p>
               {t.depthView.pitchLabel}: {pitchDownDeg.toFixed(1)}{t.depthView.angleUnit}
             </p>
+          )}
+          {!frustumInfo.coversScene && (
+            <p className="font-semibold text-amber-300">{t.depthView.coverageGap}</p>
           )}
           {!frustumInfo.withinRange && (
             <p className="font-semibold text-rose-300">{t.depthView.outOfRange}</p>

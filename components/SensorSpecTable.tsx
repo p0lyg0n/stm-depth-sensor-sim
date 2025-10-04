@@ -5,6 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 interface SensorSpecTableProps {
   sensor?: SensorSpec;
+  variant?: "card" | "plain";
 }
 
 function formatRange(range?: SensorSpec["depthRange_m"], unit = "m") {
@@ -54,14 +55,20 @@ function formatImu(imu?: SensorSpec["imu"]) {
   return enabled.length ? enabled.join(", ") : "-";
 }
 
-export function SensorSpecTable({ sensor }: SensorSpecTableProps) {
+export function SensorSpecTable({ sensor, variant = "card" }: SensorSpecTableProps) {
   const { t } = useTranslation();
 
+  const containerClass = variant === "card"
+    ? "rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-xs text-slate-200 shadow-lg md:p-4 md:text-sm"
+    : "space-y-3 text-xs text-slate-200 md:text-sm";
+
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-xs text-slate-200 shadow-lg md:p-4 md:text-sm">
-      <h3 className="mb-2 text-base font-semibold text-slate-50 md:text-lg">
-        {t.sensorPanel.specTitle}
-      </h3>
+    <div className={containerClass}>
+      {variant === "card" && (
+        <h3 className="text-base font-semibold text-slate-50 md:text-lg">
+          {t.sensorPanel.specTitle}
+        </h3>
+      )}
       {!sensor ? (
         <p className="text-slate-400">-</p>
       ) : (
@@ -99,7 +106,6 @@ export function SensorSpecTable({ sensor }: SensorSpecTableProps) {
     </div>
   );
 }
-
 function SpecRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start gap-3">
