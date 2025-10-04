@@ -247,8 +247,10 @@ function SensorGizmo({ frustumInfo }: { frustumInfo?: FrustumInfo }) {
     }
   }, [frustumInfo]);
 
-  const frustumGeometry = useMemo(() => {
-    if (!frustumInfo) return undefined;
+  const { frustumLines, frustumFaces } = useMemo(() => {
+    if (!frustumInfo) {
+      return { frustumLines: undefined, frustumFaces: undefined };
+    }
     const { near, far, nearWidth, nearHeight, farWidth, farHeight } = frustumInfo;
 
     const nearHalfW = nearWidth / 2;
@@ -270,36 +272,62 @@ function SensorGizmo({ frustumInfo }: { frustumInfo?: FrustumInfo }) {
       new THREE.Vector3(-farHalfW, -farHalfH, far)
     ];
 
-    const geometry = new THREE.BufferGeometry();
-    const points: number[] = [];
+    const lineGeometry = new THREE.BufferGeometry();
+    const linePoints: number[] = [];
 
     nearCorners.forEach((corner) => {
-      points.push(0, 0, 0, corner.x, corner.y, corner.z);
+      linePoints.push(0, 0, 0, corner.x, corner.y, corner.z);
     });
 
     for (let i = 0; i < 4; i++) {
       const current = nearCorners[i];
       const next = nearCorners[(i + 1) % 4];
-      points.push(current.x, current.y, current.z, next.x, next.y, next.z);
+      linePoints.push(current.x, current.y, current.z, next.x, next.y, next.z);
     }
 
     for (let i = 0; i < 4; i++) {
       const currentNear = nearCorners[i];
       const currentFar = farCorners[i];
-      points.push(currentNear.x, currentNear.y, currentNear.z, currentFar.x, currentFar.y, currentFar.z);
+      linePoints.push(currentNear.x, currentNear.y, currentNear.z, currentFar.x, currentFar.y, currentFar.z);
     }
 
     for (let i = 0; i < 4; i++) {
       const current = farCorners[i];
       const next = farCorners[(i + 1) % 4];
-      points.push(current.x, current.y, current.z, next.x, next.y, next.z);
+      linePoints.push(current.x, current.y, current.z, next.x, next.y, next.z);
     }
 
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
-    return geometry;
+    lineGeometry.setAttribute("position", new THREE.Float32BufferAttribute(linePoints, 3));
+
+    const faceGeometry = new THREE.BufferGeometry();
+    const faceVertices: number[] = [];
+
+    for (let i = 0; i < 4; i++) {
+      const next = (i + 1) % 4;
+      const a = farCorners[i];
+      const b = farCorners[next];
+      const apex = new THREE.Vector3(0, 0, 0);
+
+      faceVertices.push(
+        apex.x,
+        apex.y,
+        apex.z,
+        a.x,
+        a.y,
+        a.z,
+        b.x,
+        b.y,
+        b.z
+      );
+    }
+
+    faceGeometry.setAttribute("position", new THREE.Float32BufferAttribute(faceVertices, 3));
+    faceGeometry.computeVertexNormals();
+
+    return { frustumLines: lineGeometry, frustumFaces: faceGeometry };
   }, [frustumInfo]);
 
-  if (!frustumInfo || !frustumGeometry) return null;
+  if (!frustumInfo || !frustumLines || !frustumFaces) return null;
 
   return (
     <group ref={groupRef}>
@@ -307,7 +335,10 @@ function SensorGizmo({ frustumInfo }: { frustumInfo?: FrustumInfo }) {
         <boxGeometry args={[0.12, 0.06, 0.16]} />
         <meshStandardMaterial color="#fb923c" />
       </mesh>
-      <lineSegments geometry={frustumGeometry}>
+      <mesh geometry={frustumFaces}>
+        <meshStandardMaterial color="#f97316" opacity={0.15} transparent side={THREE.DoubleSide} />
+      </mesh>
+      <lineSegments geometry={frustumLines}>
         <lineBasicMaterial color="#fb923c" />
       </lineSegments>
     </group>
